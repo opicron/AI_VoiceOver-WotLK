@@ -1,12 +1,16 @@
-Drop these folders into: 3.3.5 Client\Interface\AddOns
+# AI_VoiceOver WotLK
 
-Currently have Vanilla working and TBC partially working, ned to sort out some issues with quests of the same name
+Modded version of AI_VoiceOver WotLK 3.3.5. 
 
+Adjustments:
 
-used the base AI Voiceover addon from MrThinger https://www.curseforge.com/members/mrthinger/projects
+* Fix erratic portrait for monsters
+* Removed installation popup
+* Improved debugging output
 
-And used some data from Darkneo https://www.curseforge.com/members/darkneo/projects
+## Installation
 
-Please let me know if there are any bugs, likely from quest chains of the same name or alliance vs horde issues
-
-[https://discord.gg/uH8fss4m ](https://discord.gg/kttdfFq9Ft)
+* Copy into `..\Interface\AddOns`
+* Get sounds packs (Vanilla, Vanilla Extra, TBC, Wrath)
+  * https://www.curseforge.com/members/mrthinger/projects
+  * https://www.curseforge.com/members/darkneo/projects
