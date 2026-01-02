@@ -79,39 +79,39 @@ function Addon:OnInitialize()
     self:RegisterEvent("GOSSIP_SHOW")
     self:RegisterEvent("GOSSIP_CLOSED")
 
-    if select(5, GetAddOnInfo("VoiceOver")) ~= "MISSING" then
-        DisableAddOn("VoiceOver")
-        if not self.db.profile.SeenDuplicateDialog then
-            StaticPopupDialogs["VOICEOVER_DUPLICATE_ADDON"] =
-            {
-                text = [[VoiceOver|n|nTo fix the quest autoaccept bugs we had to rename the addon folder. If you're seeing this popup, it means the old one wasn't automatically removed.|n|nYou can safely delete "VoiceOver" from your Addons folder. "AI_VoiceOver" is the new folder.]],
-                button1 = OKAY,
-                timeout = 0,
-                whileDead = 1,
-                OnAccept = function()
-                    self.db.profile.SeenDuplicateDialog = true
-                end,
-            }
-            StaticPopup_Show("VOICEOVER_DUPLICATE_ADDON")
-        end
-    end
+    --if select(5, GetAddOnInfo("VoiceOver")) ~= "MISSING" then
+    --    DisableAddOn("VoiceOver")
+    --    if not self.db.profile.SeenDuplicateDialog then
+    --        StaticPopupDialogs["VOICEOVER_DUPLICATE_ADDON"] =
+    --        {
+    --            text = [[VoiceOver|n|nTo fix the quest autoaccept bugs we had to rename the addon folder. If you're seeing this popup, it means the old one wasn't automatically removed.|n|nYou can safely delete "VoiceOver" from your Addons folder. "AI_VoiceOver" is the new folder.]],
+    --            button1 = OKAY,
+    --            timeout = 0,
+    --            whileDead = 1,
+    --            OnAccept = function()
+    --                self.db.profile.SeenDuplicateDialog = true
+    --            end,
+    --        }
+    --        StaticPopup_Show("VOICEOVER_DUPLICATE_ADDON")
+    --    end
+    --end
 
-    if select(5, GetAddOnInfo("AI_VoiceOver_112")) ~= "MISSING" then
-        DisableAddOn("AI_VoiceOver_112")
-        if not self.db.profile.SeenDuplicateDialog112 then
-            StaticPopupDialogs["VOICEOVER_DUPLICATE_ADDON_112"] =
-            {
-                text = [[VoiceOver|n|nVoiceOver port for 1.12 has been merged together with other versions and is no longer distributed as a separate addon.|n|nYou can safely delete "AI_VoiceOver_112" from your Addons folder. "AI_VoiceOver" is the new folder.]],
-                button1 = OKAY,
-                timeout = 0,
-                whileDead = 1,
-                OnAccept = function()
-                    self.db.profile.SeenDuplicateDialog112 = true
-                end,
-            }
-            StaticPopup_Show("VOICEOVER_DUPLICATE_ADDON_112")
-        end
-    end
+    --if select(5, GetAddOnInfo("AI_VoiceOver_112")) ~= "MISSING" then
+    --    DisableAddOn("AI_VoiceOver_112")
+    --    if not self.db.profile.SeenDuplicateDialog112 then
+    --        StaticPopupDialogs["VOICEOVER_DUPLICATE_ADDON_112"] =
+    --        {
+    --            text = [[VoiceOver|n|nVoiceOver port for 1.12 has been merged together with other versions and is no longer distributed as a separate addon.|n|nYou can safely delete "AI_VoiceOver_112" from your Addons folder. "AI_VoiceOver" is the new folder.]],
+    --            button1 = OKAY,
+    --            timeout = 0,
+    --            whileDead = 1,
+    --            OnAccept = function()
+    --                self.db.profile.SeenDuplicateDialog112 = true
+    --            end,
+    --        }
+    --        StaticPopup_Show("VOICEOVER_DUPLICATE_ADDON_112")
+    --    end
+    --end
 
     if not DataModules:HasRegisteredModules() then
         StaticPopupDialogs["VOICEOVER_NO_REGISTERED_DATA_MODULES"] =

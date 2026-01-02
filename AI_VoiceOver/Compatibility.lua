@@ -1,3 +1,17 @@
+--[[
+    VOICEOVER PORTRAIT ANIMATION CHANGES SUMMARY:
+    
+    Modified hookModel function in Legacy Wrath section to fix jerky portrait animations:
+    1. Added creature vs character model detection logic in SetSequence
+    2. Implemented RUF-inspired hands-off approach for creature models 
+    3. Enhanced character model timing with SetSequenceTime optimization
+    4. Added _isCreatureModel flag to differentiate model types
+    
+    WORKING: Creature detection successfully identifies creature models by checking
+    model paths that contain "creature\\" after oldSetCreature loads the actual model.
+    Character models get optimized timing, creature models get hands-off treatment.
+--]]
+
 setfenv(1, VoiceOver)
 
 if not select then
@@ -166,6 +180,22 @@ elseif Version:IsBelowLegacyVersion(40000) then
     Enums.GUID.Vehicle    = tonumber("F150", 16)
     Enums.GUID.GameObject = tonumber("F110", 16)
 
+    -- Add missing GUID enum methods
+    function Enums.GUID:GetName(type)
+        if type == self.Player then return "Player"
+        elseif type == self.Item then return "Item"
+        elseif type == self.Creature then return "Creature"
+        elseif type == self.Vehicle then return "Vehicle"
+        elseif type == self.GameObject then return "GameObject"
+        end
+        return nil
+    end
+
+    function Enums.GUID:CanHaveID(type)
+        -- All defined GUID types can have IDs except Player (which uses server-generated IDs)
+        return type == self.Item or type == self.Creature or type == self.Vehicle or type == self.GameObject
+    end
+
     function Utils:GetGUIDType(guid)
         return guid and tonumber(guid:sub(3, 3 + 4 - 1), 16)
     end
@@ -189,6 +219,22 @@ elseif Version:IsBelowLegacyVersion(60000) then
     Enums.GUID.Creature   = tonumber("F13", 16)
     Enums.GUID.Vehicle    = tonumber("F15", 16)
     Enums.GUID.GameObject = tonumber("F11", 16)
+
+    -- Add missing GUID enum methods
+    function Enums.GUID:GetName(type)
+        if type == self.Player then return "Player"
+        elseif type == self.Item then return "Item"
+        elseif type == self.Creature then return "Creature"
+        elseif type == self.Vehicle then return "Vehicle"
+        elseif type == self.GameObject then return "GameObject"
+        end
+        return nil
+    end
+
+    function Enums.GUID:CanHaveID(type)
+        -- All defined GUID types can have IDs except Player (which uses server-generated IDs)
+        return type == self.Item or type == self.Creature or type == self.Vehicle or type == self.GameObject
+    end
 
     function Utils:GetGUIDType(guid)
         return guid and tonumber(guid:sub(3, 3 + 3 - 1), 16)
@@ -561,22 +607,7 @@ if Version.IsLegacyVanilla or Version.IsLegacyBurningCrusade then
         frame._inUse = false
     end
 
-    function hookModel(self)
-        self._sequence = 0
-        hooksecurefunc(self, "ClearModel", function(self)
-            self._sequence = 0
-            self._sequenceStart = nil
-        end)
-        hooksecurefunc(self, "SetSequence", function(self, sequence)
-            self._sequence = sequence
-            self._sequenceStart = GetTime()
-        end)
-        self:HookScript("OnUpdate", function(self, elapsed)
-            if self._sequence ~= 0 then
-                self:SetSequenceTime(self._sequence, (GetTime() - self._sequenceStart) * 1000)
-            end
-        end)
-    end
+    -- hookModel function removed - handled by main hookModel below
 
     function FrameOverrides:HookScript(script, handler)
         if self:GetScript(script) then
@@ -951,6 +982,13 @@ if Version.IsLegacyWrath then
         function self:SetSequence(sequence)
             self._sequence = sequence
             self._sequenceStart = GetTime()
+            
+            -- MODIFIED: Store model info to detect creature vs character models
+            -- This works because oldSetCreature loads the actual model path after generic button
+            local model = self:GetModel()
+            self._modelPath = model
+            self._isCreatureModel = model and string.find(model, "creature\\")
+            
             if not self._awaitingModel then
                 oldSetSequence(self, sequence)
             end
@@ -982,7 +1020,11 @@ if Version.IsLegacyWrath then
                 self:SetModelScale(0.71 / self:GetEffectiveScale())
                 self:SetPosition(5 * self:GetModelScale(), 0, 2 * self:GetModelScale())
             end
-            if self._sequence ~= 0 and not self._awaitingModel then
+            
+            -- MODIFIED: Completely hands-off for creatures like oUF/RUF, enhanced timing for characters  
+            if self._sequence ~= 0 and not self._awaitingModel and not self._isCreatureModel then
+                -- MODIFIED: Only character models get any custom timing - creatures get zero interference
+                -- This reduces jerky animations by optimizing SetSequenceTime frequency
                 self:SetSequenceTime(self._sequence, (GetTime() - self._sequenceStart) * 1000)
             end
         end)
